@@ -135,8 +135,6 @@ MaybeError Texture::InitializeAsInternalTexture() {
         }
     }
 
-    SetLabelImpl();
-
     if (device->IsToggleEnabled(Toggle::NonzeroClearResourcesOnCreationForTesting)) {
         CommandRecordingContext* commandContext;
         DAWN_TRY_ASSIGN(commandContext, device->GetPendingCommandContext());
@@ -144,12 +142,15 @@ MaybeError Texture::InitializeAsInternalTexture() {
             ClearTexture(commandContext, GetAllSubresources(), TextureBase::ClearValue::NonZero));
     }
 
+    SetLabelImpl();
+
     return {};
 }
 
 MaybeError Texture::InitializeAsSwapChainTexture(ComPtr<ID3D11Resource> d3d11Texture) {
     mD3d11Resource = std::move(d3d11Texture);
     SetLabelHelper("Dawn_SwapChainTexture");
+
     return {};
 }
 
@@ -566,6 +567,9 @@ ResultOrError<ComPtr<ID3D11UnorderedAccessView>> TextureView::GetD3D11UnorderedA
                               ->CreateUnorderedAccessView(
                                   ToBackend(GetTexture())->GetD3D11Resource(), &uavDesc, &uav),
                           "CreateUnorderedAccessView"));
+
+    SetDebugName(ToBackend(GetDevice()), uav.Get(), "Dawn_TextureView", GetLabel());
+
     return uav;
 }
 
