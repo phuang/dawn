@@ -157,9 +157,6 @@ ResultOrError<CommandRecordingContext*> Device::GetPendingCommandContext(
 }
 
 MaybeError Device::TickImpl() {
-    // Perform cleanup operations to free unused objects
-    [[maybe_unused]] ExecutionSerial completedSerial = GetCompletedCommandSerial();
-
     if (mPendingCommands.IsOpen() && mPendingCommands.NeedsSubmit()) {
         DAWN_TRY(ExecutePendingCommandContext());
         DAWN_TRY(NextSerial());
@@ -328,7 +325,9 @@ MaybeError Device::CopyFromStagingToTextureImpl(const BufferBase* source,
                                                 const TextureDataLayout& src,
                                                 const TextureCopy& dst,
                                                 const Extent3D& copySizePixels) {
-    return DAWN_UNIMPLEMENTED_ERROR("CopyFromStagingToTextureImpl");
+    UNREACHABLE();
+    return DAWN_INTERNAL_ERROR(
+        "d3d11::Device::CopyFromStagingToTextureImpl() should never be called");
 }
 
 const DeviceInfo& Device::GetDeviceInfo() const {
