@@ -879,6 +879,10 @@ MaybeError CommandBuffer::RecordFirstIndexOffset(RenderPipeline* renderPipeline,
         return {};
     }
 
+    if (firstVertex == 0 && firstInstance == 0) {
+        return {};
+    }
+
     // TODO: only update the uniform buffer when the value changes.
     std::array<uint32_t, 2> offsets = {
         firstVertex,
