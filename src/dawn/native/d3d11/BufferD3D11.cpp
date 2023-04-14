@@ -76,6 +76,8 @@ D3D11_USAGE D3D11BufferUsage(wgpu::BufferUsage usage) {
     if (IsStaging(usage)) {
         return D3D11_USAGE_STAGING;
     } else {
+        // Except for map usages, all other usages will use D3D11_USAGE_DEFAULT, so the buffer can
+        // be accessed by shaders.
         return D3D11_USAGE_DEFAULT;
     }
 }
