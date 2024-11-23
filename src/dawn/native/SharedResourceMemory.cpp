@@ -293,7 +293,10 @@ MaybeError SharedResourceMemory::EndAccess(Resource* resource, EndAccessState* s
         ResultOrError<FenceAndSignalValue> result =
             EndAccessInternal(lastUsageSerial, resource, state);
         if (result.IsSuccess()) {
-            fenceList.push_back(result.AcquireSuccess());
+            FenceAndSignalValue value = result.AcquireSuccess();
+            if (value.signaledValue != std::numeric_limits<uint64_t>::max()) {
+                fenceList.push_back(std::move(value));
+            }
         } else {
             err = result.AcquireError();
         }

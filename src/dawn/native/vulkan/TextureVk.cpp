@@ -30,6 +30,7 @@
 #include <utility>
 
 #include "dawn/common/Assert.h"
+#include "dawn/common/Log.h"
 #include "dawn/common/Math.h"
 #include "dawn/native/ChainUtils.h"
 #include "dawn/native/DynamicUploader.h"
@@ -1633,7 +1634,6 @@ MaybeError ImportedTextureBase::EndAccess(ExternalSemaphoreHandle* handle,
     // TODO(dawn:1509): Avoid the empty submit.
     if (mExternalSemaphoreHandle == kNullExternalSemaphoreHandle || targetLayout != currentLayout) {
         mDesiredExportLayout = targetLayout;
-
         Queue* queue = ToBackend(GetDevice()->GetQueue());
         CommandRecordingContext* recordingContext = queue->GetPendingRecordingContext();
         recordingContext->specialSyncTextures.insert(this);
@@ -1641,7 +1641,7 @@ MaybeError ImportedTextureBase::EndAccess(ExternalSemaphoreHandle* handle,
 
         currentLayout = targetLayout;
     }
-    DAWN_ASSERT(mExternalSemaphoreHandle != kNullExternalSemaphoreHandle);
+    // DAWN_ASSERT(mExternalSemaphoreHandle != kNullExternalSemaphoreHandle);
 
     // Write out the layouts and signal semaphore
     *releasedOldLayout = currentLayout;

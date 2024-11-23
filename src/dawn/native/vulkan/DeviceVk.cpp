@@ -153,7 +153,7 @@ MaybeError Device::Initialize(const UnpackedPtr<DeviceDescriptor>& descriptor) {
 #if DAWN_PLATFORM_IS(FUCHSIA)
         mExternalSemaphoreService = std::make_unique<external_semaphore::Service>(
             this, VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_ZIRCON_EVENT_BIT_FUCHSIA);
-#elif DAWN_PLATFORM_IS(ANDROID) || DAWN_PLATFORM_IS(CHROMEOS)
+#elif DAWN_PLATFORM_IS(ANDROID) || DAWN_PLATFORM_IS(CHROMEOS) || DAWN_PLATFORM_IS(OSOH)
         mExternalSemaphoreService = std::make_unique<external_semaphore::Service>(
             this, VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT);
 #else
@@ -266,6 +266,7 @@ ResultOrError<Ref<SharedTextureMemoryBase>> Device::ImportSharedTextureMemoryImp
     DAWN_TRY_ASSIGN(type,
                     (unpacked.ValidateBranches<Branch<SharedTextureMemoryDmaBufDescriptor>,
                                                Branch<SharedTextureMemoryAHardwareBufferDescriptor>,
+                                               Branch<SharedTextureMemoryOHNativeBufferDescriptor>,
                                                Branch<SharedTextureMemoryOpaqueFDDescriptor>>()));
 
     switch (type) {
@@ -281,6 +282,13 @@ ResultOrError<Ref<SharedTextureMemoryBase>> Device::ImportSharedTextureMemoryImp
             return SharedTextureMemory::Create(
                 this, descriptor->label,
                 unpacked.Get<SharedTextureMemoryAHardwareBufferDescriptor>());
+        case wgpu::SType::SharedTextureMemoryOHNativeBufferDescriptor:
+            DAWN_INVALID_IF(!HasFeature(Feature::SharedTextureMemoryOHNativeBuffer),
+                            "%s is not enabled.",
+                            wgpu::FeatureName::SharedTextureMemoryOHNativeBuffer);
+            return SharedTextureMemory::Create(
+                this, descriptor->label,
+                unpacked.Get<SharedTextureMemoryOHNativeBufferDescriptor>());
         case wgpu::SType::SharedTextureMemoryOpaqueFDDescriptor:
             DAWN_INVALID_IF(!HasFeature(Feature::SharedTextureMemoryOpaqueFD), "%s is not enabled.",
                             wgpu::FeatureName::SharedTextureMemoryOpaqueFD);

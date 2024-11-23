@@ -190,6 +190,17 @@ struct VulkanFunctions {
         nullptr;
 #endif  // DAWN_PLATFORM_IS(ANDROID)
 
+#if DAWN_PLATFORM_IS(OHOS)
+    // KHR_android_surface
+    VkFn<PFN_vkCreateSurfaceOHOS> CreateSurfaceOHOS = nullptr;
+
+    // VK_ANDROID_external_memory_android_hardware_buffer
+    VkFn<PFN_vkGetNativeBufferPropertiesOHOS>
+        GetNativeBufferPropertiesOHOS = nullptr;
+    VkFn<PFN_vkGetMemoryNativeBufferOHOS> GetMemoryNativeBufferOHOS =
+        nullptr;
+#endif  // DAWN_PLATFORM_IS(OHOS)
+
 #if defined(DAWN_USE_X11)
     // KHR_xlib_surface
     VkFn<PFN_vkCreateXlibSurfaceKHR> CreateXlibSurfaceKHR = nullptr;

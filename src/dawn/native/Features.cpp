@@ -231,6 +231,11 @@ static constexpr FeatureEnumAndInfo kFeatureInfo[] = {
       "https://dawn.googlesource.com/dawn/+/refs/heads/main/docs/dawn/features/"
       "shared_texture_memory.md",
       FeatureInfo::FeatureState::Stable}},
+    {Feature::SharedTextureMemoryOHNativeBuffer,
+     {"Support importing OH_NativeBuffer as shared texture memory.",
+      "https://dawn.googlesource.com/dawn/+/refs/heads/main/docs/dawn/features/"
+      "shared_texture_memory.md",
+      FeatureInfo::FeatureState::Stable}},
     {Feature::SharedTextureMemoryDmaBuf,
      {"Support importing DmaBuf as shared texture memory.",
       "https://dawn.googlesource.com/dawn/+/refs/heads/main/docs/dawn/features/"
