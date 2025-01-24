@@ -1,4 +1,4 @@
-// Copyright 2022 The Dawn & Tint Authors
+// Copyright 2023 The Dawn & Tint Authors
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,42 +25,23 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef SRC_DAWN_NATIVE_VULKAN_EXTERNALHANDLE_H_
-#define SRC_DAWN_NATIVE_VULKAN_EXTERNALHANDLE_H_
+#include "dawn/native/OHOSFunctions.h"
 
-#include "dawn/common/vulkan_platform.h"
+namespace dawn::native {
 
-namespace dawn::native::vulkan {
+OHOSFunctions::OHOSFunctions() {
+    if (!mNativeBufferLib.Open("libnative_buffer.so") ||
+        !mNativeBufferLib.GetProc(&Reference, "OH_NativeBuffer_Reference") ||
+        !mNativeBufferLib.GetProc(&Unreference, "OH_NativeBuffer_Unreference") ||
+        !mNativeBufferLib.GetProc(&GetConfig, "OH_NativeBuffer_GetConfig")) {
+        mNativeBufferLib.Close();
+    }
+}
 
-// ExternalSemaphoreHandle
-#if DAWN_PLATFORM_IS(WINDOWS)
-using ExternalSemaphoreHandle = HANDLE;
-const ExternalSemaphoreHandle kNullExternalSemaphoreHandle = nullptr;
-#elif DAWN_PLATFORM_IS(FUCHSIA)
-using ExternalSemaphoreHandle = zx_handle_t;
-const ExternalSemaphoreHandle kNullExternalSemaphoreHandle = ZX_HANDLE_INVALID;
-#elif DAWN_PLATFORM_IS(POSIX)
-using ExternalSemaphoreHandle = int;
-const ExternalSemaphoreHandle kNullExternalSemaphoreHandle = -1;
-#else
-#error "Platform not supported."
-#endif
+OHOSFunctions::~OHOSFunctions() = default;
 
-// ExternalMemoryHandle
-#if DAWN_PLATFORM_IS(ANDROID)
-using ExternalMemoryHandle = struct AHardwareBuffer*;
-#elif DAWN_PLATFORM_IS(OHOS)
-using ExternalMemoryHandle = struct ::OH_NativeBuffer*;
-#elif DAWN_PLATFORM_IS(LINUX)
-using ExternalMemoryHandle = int;
-#elif DAWN_PLATFORM_IS(FUCHSIA)
-// Really a Zircon vmo handle.
-using ExternalMemoryHandle = zx_handle_t;
-#else
-// Generic types so that the rest of the Vulkan backend compiles.
-using ExternalMemoryHandle = void*;
-#endif
+bool OHOSFunctions::IsValid() const {
+    return mNativeBufferLib.Valid();
+}
 
-}  // namespace dawn::native::vulkan
-
-#endif  // SRC_DAWN_NATIVE_VULKAN_EXTERNALHANDLE_H_
+}  // namespace dawn::native

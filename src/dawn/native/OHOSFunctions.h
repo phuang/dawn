@@ -1,4 +1,4 @@
-// Copyright 2022 The Dawn & Tint Authors
+// Copyright 2023 The Dawn & Tint Authors
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,42 +25,31 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef SRC_DAWN_NATIVE_VULKAN_EXTERNALHANDLE_H_
-#define SRC_DAWN_NATIVE_VULKAN_EXTERNALHANDLE_H_
+#ifndef SRC_DAWN_NATIVE_OHOSFUNCTIONS_H_
+#define SRC_DAWN_NATIVE_OHOSFUNCTIONS_H_
 
-#include "dawn/common/vulkan_platform.h"
+#include <native_buffer/native_buffer.h>
 
-namespace dawn::native::vulkan {
+#include "dawn/common/DynamicLib.h"
 
-// ExternalSemaphoreHandle
-#if DAWN_PLATFORM_IS(WINDOWS)
-using ExternalSemaphoreHandle = HANDLE;
-const ExternalSemaphoreHandle kNullExternalSemaphoreHandle = nullptr;
-#elif DAWN_PLATFORM_IS(FUCHSIA)
-using ExternalSemaphoreHandle = zx_handle_t;
-const ExternalSemaphoreHandle kNullExternalSemaphoreHandle = ZX_HANDLE_INVALID;
-#elif DAWN_PLATFORM_IS(POSIX)
-using ExternalSemaphoreHandle = int;
-const ExternalSemaphoreHandle kNullExternalSemaphoreHandle = -1;
-#else
-#error "Platform not supported."
-#endif
+namespace dawn::native {
 
-// ExternalMemoryHandle
-#if DAWN_PLATFORM_IS(ANDROID)
-using ExternalMemoryHandle = struct AHardwareBuffer*;
-#elif DAWN_PLATFORM_IS(OHOS)
-using ExternalMemoryHandle = struct ::OH_NativeBuffer*;
-#elif DAWN_PLATFORM_IS(LINUX)
-using ExternalMemoryHandle = int;
-#elif DAWN_PLATFORM_IS(FUCHSIA)
-// Really a Zircon vmo handle.
-using ExternalMemoryHandle = zx_handle_t;
-#else
-// Generic types so that the rest of the Vulkan backend compiles.
-using ExternalMemoryHandle = void*;
-#endif
+// A helper class that dynamically loads the native window library on Android.
+class OHOSFunctions {
+  public:
+    OHOSFunctions();
+    ~OHOSFunctions();
 
-}  // namespace dawn::native::vulkan
+    bool IsValid() const;
 
-#endif  // SRC_DAWN_NATIVE_VULKAN_EXTERNALHANDLE_H_
+    void (*Reference)(::OH_NativeBuffer* buffer) = nullptr;
+    void (*Unreference)(::OH_NativeBuffer* buffer) = nullptr;
+    void (*GetConfig)(::OH_NativeBuffer* buffer, ::OH_NativeBuffer_Config* config) = nullptr;
+
+  private:
+    DynamicLib mNativeBufferLib;
+};
+
+}  // namespace dawn::native
+
+#endif  // SRC_DAWN_NATIVE_OHOSFUNCTIONS_H_

@@ -2178,6 +2178,16 @@
             {"name": "use external format", "type" : "bool"}
         ]
     },
+    "shared texture memory o h native buffer descriptor": {
+        "category": "structure",
+        "chained": "in",
+        "chain roots": ["shared texture memory descriptor"],
+        "tags": ["dawn", "native"],
+        "members": [
+            {"name": "handle", "type": "void *"},
+            {"name": "use external format", "type" : "bool"}
+        ]
+    },
     "shared texture memory dma buf plane": {
         "category": "structure",
         "tags": ["dawn", "native"],
@@ -2525,6 +2535,7 @@
             {"value": 54, "name": "clip distances", "tags": ["dawn"]},
             {"value": 55, "name": "dawn texel copy buffer row alignment", "tags": ["dawn"]},
             {"value": 56, "name": "flexible texture views", "tags": ["dawn"]}
+            {"value": 57, "name": "shared texture memory o h native buffer", "tags": ["dawn", "native"]}
         ]
     },
     "filter mode": {
@@ -3876,6 +3887,15 @@
             {"name": "window", "type": "void *"}
         ]
     },
+    "surface source o h native window": {
+        "category": "structure",
+        "chained": "in",
+        "chain roots": ["surface descriptor"],
+        "tags": ["art", "native"],
+        "members": [
+            {"name": "window", "type": "void *"}
+        ]
+    },
     "surface descriptor from canvas HTML selector": {
         "category": "typedef",
         "type": "surface source canvas HTML selector _Emscripten",
@@ -4070,6 +4090,8 @@
             {"value": 57, "name": "a hardware buffer properties", "tags": ["dawn", "native"]},
             {"value": 58, "name": "dawn experimental immediate data limits", "tags": ["dawn"]},
             {"value": 59, "name": "dawn texel copy buffer row alignment limits", "tags": ["dawn"]}
+            {"value": 60, "name": "shared texture memory o h native buffer descriptor", "tags": ["dawn", "native"]},
+            {"value": 61, "name": "surface source o h native window"}
         ]
     },
     "texture": {

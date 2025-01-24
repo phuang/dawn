@@ -225,7 +225,8 @@ enum ExternalImageType {
     EGLImage,
     GLTexture,
     AHardwareBuffer,
-    Last = AHardwareBuffer,
+    OHNativeBuffer,
+    Last = OHNativeBuffer,
 };
 
 // Common properties of external images

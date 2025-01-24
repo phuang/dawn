@@ -28,6 +28,7 @@
 #include <unistd.h>
 #include <utility>
 
+#include "dawn/common/Log.h"
 #include "dawn/native/SystemHandle.h"
 #include "dawn/native/vulkan/BackendVk.h"
 #include "dawn/native/vulkan/DeviceVk.h"
@@ -37,7 +38,7 @@
 #include "dawn/native/vulkan/external_semaphore/SemaphoreServiceImplementationFD.h"
 
 static constexpr VkExternalSemaphoreHandleTypeFlagBits kDefaultHandleType =
-#if DAWN_PLATFORM_IS(ANDROID) || DAWN_PLATFORM_IS(CHROMEOS)
+#if DAWN_PLATFORM_IS(ANDROID) || DAWN_PLATFORM_IS(CHROMEOS) || DAWN_PLATFORM_IS(OHOS)
     VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT;
 #else
     VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR;
@@ -166,8 +167,10 @@ class ServiceImplementationFD : public ServiceImplementation {
         DAWN_TRY(CheckVkSuccess(
             mDevice->fn.GetSemaphoreFdKHR(mDevice->GetVkDevice(), &semaphoreGetFdInfo, &fd),
             "vkGetSemaphoreFdKHR"));
-
-        DAWN_ASSERT(fd >= 0);
+        // Vulkan spec allows driver return -1 as a valid file descriptor for a signaled semaphore
+        // with handle type VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT
+        DAWN_ASSERT(fd >= 0 ||
+                    (fd == -1 && mHandleType == VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT));
         return fd;
     }
 
