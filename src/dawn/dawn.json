@@ -1935,6 +1935,16 @@
             {"name": "use external format", "type" : "bool"}
         ]
     },
+    "shared texture memory o h native buffer descriptor": {
+        "category": "structure",
+        "chained": "in",
+        "chain roots": ["shared texture memory descriptor"],
+        "tags": ["dawn", "native"],
+        "members": [
+            {"name": "handle", "type": "void *"},
+            {"name": "use external format", "type" : "bool"}
+        ]
+    },
     "shared texture memory dma buf plane": {
         "category": "structure",
         "tags": ["dawn", "native"],
@@ -2306,7 +2316,8 @@
             {"value": 55, "name": "dawn texel copy buffer row alignment", "tags": ["dawn"]},
             {"value": 56, "name": "flexible texture views", "tags": ["dawn"]},
             {"value": 57, "name": "chromium experimental subgroup matrix", "tags": ["dawn"]},
-            {"value": 58, "name": "shared fence EGL sync", "tags": ["dawn", "native"]}
+            {"value": 58, "name": "shared fence EGL sync", "tags": ["dawn", "native"]},
+            {"value": 59, "name": "shared texture memory o h native buffer", "tags": ["dawn", "native"]}
         ]
     },
     "filter mode": {
@@ -3587,6 +3598,15 @@
             {"name": "window", "type": "void *"}
         ]
     },
+    "surface source o h native window": {
+        "category": "structure",
+        "chained": "in",
+        "chain roots": ["surface descriptor"],
+        "tags": ["art", "native"],
+        "members": [
+            {"name": "window", "type": "void *"}
+        ]
+    },
     "emscripten surface source canvas HTML selector": {
         "category": "structure",
         "chained": "in",
@@ -3806,7 +3826,9 @@
             {"value": 59, "name": "dawn texel copy buffer row alignment limits", "tags": ["dawn"]},
             {"value": 60, "name": "adapter properties subgroup matrix configs", "tags": ["dawn"]},
             {"value": 61, "name": "shared fence EGL sync descriptor", "tags": ["dawn", "native"]},
-            {"value": 62, "name": "shared fence EGL sync export info", "tags": ["dawn", "native"]}
+            {"value": 62, "name": "shared fence EGL sync export info", "tags": ["dawn", "native"]},
+            {"value": 63, "name": "shared texture memory o h native buffer descriptor", "tags": ["dawn", "native"]},
+            {"value": 64, "name": "surface source o h native window"}
         ]
     },
     "texture": {

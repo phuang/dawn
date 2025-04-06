@@ -34,6 +34,7 @@
 
 #include "dawn/common/Assert.h"
 #include "dawn/common/GPUInfo.h"
+#include "dawn/common/Log.h"
 #include "dawn/native/ChainUtils.h"
 #include "dawn/native/Error.h"
 #include "dawn/native/Instance.h"
@@ -49,6 +50,10 @@
 #if DAWN_PLATFORM_IS(ANDROID)
 #include "dawn/native/AHBFunctions.h"
 #endif  // DAWN_PLATFORM_IS(ANDROID)
+
+#if DAWN_PLATFORM_IS(OHOS)
+#include "dawn/native/OHOSFunctions.h"
+#endif  // DAWN_PLATFORM_IS(OHOS)
 
 namespace dawn::native::vulkan {
 
@@ -480,6 +485,14 @@ void PhysicalDevice::InitializeSupportedFeaturesImpl() {
         }
     }
 #endif  // DAWN_PLATFORM_IS(ANDROID)
+
+#if DAWN_PLATFORM_IS(OHOS)
+    if (mDeviceInfo.HasExt(DeviceExt::ExternalMemoryOHNativeBuffer)) {
+        if (GetOrLoadOHOSFunctions()->IsValid()) {
+            EnableFeature(Feature::SharedTextureMemoryOHNativeBuffer);
+        }
+    }
+#endif  // DAWN_PLATFORM_IS(OHOS)
 
     if (CheckSemaphoreSupport(DeviceExt::ExternalSemaphoreZirconHandle,
                               VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_ZIRCON_EVENT_BIT_FUCHSIA)) {
@@ -1117,6 +1130,17 @@ const AHBFunctions* PhysicalDevice::GetOrLoadAHBFunctions() {
 #else
     DAWN_UNREACHABLE();
 #endif  // DAWN_PLATFORM_IS(ANDROID)
+}
+
+const OHOSFunctions* PhysicalDevice::GetOrLoadOHOSFunctions() {
+#if DAWN_PLATFORM_IS(OHOS)
+    if (mOHOSFunctions == nullptr) {
+        mOHOSFunctions = std::make_unique<OHOSFunctions>();
+    }
+    return mOHOSFunctions.get();
+#else
+    DAWN_UNREACHABLE();
+#endif  // DAWN_PLATFORM_IS(OHOS)
 }
 
 void PhysicalDevice::PopulateBackendProperties(UnpackedPtr<AdapterInfo>& info) const {

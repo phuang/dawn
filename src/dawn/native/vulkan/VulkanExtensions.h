@@ -52,6 +52,7 @@ enum class InstanceExt {
     XcbSurface,
     XlibSurface,
     AndroidSurface,
+    OHOSSurface,
 
     // Others
     DebugUtils,
@@ -134,6 +135,7 @@ enum class DeviceExt {
     ExternalMemoryHost,
     ExternalSemaphoreFD,
     ExternalSemaphoreZirconHandle,
+    ExternalMemoryOHNativeBuffer,
 
     EnumCount,
 };
